@@ -1,3 +1,6 @@
+## Ferramenta - gnuplot
+### O que o guplot é capaz de fazer?
+O Gnuplot lida tanto com curvas (2 dimensões) quanto com superfícies (3 dimensões). As superfícies podem ser plotadas como uma malha que se ajusta à função especificada, flutuando no espaço de coordenadas 3D, ou como um gráfico de contorno no plano x-y. Para gráficos em 2D, existem vários estilos de plotagem, incluindo linhas, pontos, caixas, mapas de calor, histogramas empilhados e projeções contornadas de dados 3D. Os gráficos podem ser rotulados com rótulos e setas arbitrárias, rótulos dos eixos, um título, data e hora, e uma legenda. A interface inclui edição de linha de comando e histórico na maioria das plataformas.
 ## Primeiros passos
 ### Instalação - Linux
 Existem diversas maneiras de realizar a instalação, basta adaptar para o seu gerenciador de pacotes. Nesse caso estarei utlizando o pacman.
@@ -18,6 +21,7 @@ Se você precisar de uma versão mais recente ou específica do gnuplot que não
 make
 sudo make install
 ```
+- Para entender mais da instalação acesse a [documentação oficial de instalação](https://sourceforge.net/p/gnuplot/gnuplot-main/ci/master/tree/INSTALL.gnu).
 
 ### Para compilar o arquivo 
 
