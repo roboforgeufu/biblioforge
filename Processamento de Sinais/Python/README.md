@@ -1,4 +1,4 @@
-# Visualização de Dados de Sensores em 3D
+# Visualização de Dados de Sensores
 
 Este repositório contém um script Python que lê arquivos CSV com dados de sensores de cor e os visualiza em um gráfico 3D usando Matplotlib. O script é útil para comparar visualmente as leituras de diferentes cores capturadas pelos sensores de cor do Lego Mindstorms.
 
