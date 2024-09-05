@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/styles.css">
+    <link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon">
+    <title>A*</title>
+</head>
+<body>
+    <div class="master">
+        <div class="container">
+            <div class="grid">
+            </div>
+
+            <div class="options">
+                <div class="input-div">
+                    <label for="size">Matrix Size</label>
+                    <input type="number" name="size" id="size" class="input-size">
+                </div>
+                
+                <div class="input-div">
+                    <label for="percent">Percent</label>
+                    <input type="number" name="percent" id="percent" class="input-size" max="35">
+                </div>
+
+                <div class="input-div">
+                    <label for="">Show Distances</label>
+                    <input type="checkbox" name="input-distance" id="input-distance" class="input-distance">
+                </div>
+                
+                <div class="input-div">
+                    <button class="generate-button btn">Generate</button>
+                </div>
+            </div>
+            <div class="solution-div">
+                <button class="solution-button btn" onclick="a_star()">Find Solution</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/scripts.js"></script>
+    <script src="src/a-star.js"></script>
+</body>
+</html>
