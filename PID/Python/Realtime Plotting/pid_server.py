@@ -1,18 +1,11 @@
 #!/usr/bin/env pybricks-micropython
 
-from pybricks.hubs import EV3Brick # type: ignore
+from pybricks.hubs import EV3Brick  # type: ignore
 from pybricks.ev3devices import (  # type: ignore
-    ColorSensor,
-    GyroSensor,
-    InfraredSensor,
     Motor,
-    TouchSensor,
-    UltrasonicSensor,
 )
-from pybricks.media.ev3dev import ImageFile, SoundFile  # type: ignore
-from pybricks.parameters import Button, Color, Direction, Port, Stop  # type: ignore
-from pybricks.robotics import DriveBase  # type: ignore
-from pybricks.tools import DataLog, StopWatch, wait  # type: ignore
+from pybricks.parameters import Port  # type: ignore
+from pybricks.tools import StopWatch, wait  # type: ignore
 
 import socket
 
@@ -23,17 +16,17 @@ left_motor = Motor(Port.B)
 
 WHEEL_DIAMETER = 5.5
 WHEEL_DISTANCE = 11.25
-KP = 3
-KD = 0.5
+KP = 3.2
+KD = 0.7
 KI = 0.3
 
-def reset_angle():
 
+def reset_angle():
     right_motor.reset_angle(0)
     left_motor.reset_angle(0)
 
-def server_start():
 
+def server_start():
     client_connection = socket.socket()
     port = 12345
     client_connection.bind(("", port))
@@ -50,16 +43,16 @@ def server_start():
 
     return client, addr
 
-def send_message(client, message):
 
+def send_message(client, message):
     message = ",".join(map(str, message))
     client.send(message.encode())
     recv_message = str(client.recv(1024).decode())
 
     return recv_message
 
-def server_end(client):
 
+def server_end(client):
     message = "end"
     client.send(message.encode())
     ev3.screen.clear()
@@ -71,53 +64,62 @@ def server_end(client):
     ev3.screen.print("Connection ended!")
     wait(1000)
 
+
 def pid(target, current_angle, KP, KD, KI, last_error, i_gain):
+    error = target - current_angle
 
-        error = target - current_angle
+    p_gain = KP * error
 
-        p_gain = KP * error
+    d_gain = KD * (last_error - error)
 
-        d_gain = KD * (last_error - error)
+    if abs(error) < 7:
+        i_gain += KI * error
 
-        if -3 < error < 3:
-            i_gain += KI * error
+    pid = p_gain + d_gain + i_gain
 
-        pid = p_gain + d_gain + i_gain
-        
-        last_error = error
-    
-        return last_error, pid, p_gain, d_gain, i_gain
+    last_error = error
+
+    return (error, p_gain, d_gain, i_gain, pid)
+
 
 def turn(graus_reais, client, instance, watch):
-
     reset_angle()
 
     error = 0
-    precision = 0
+    current_angle = 0
     i_gain = 0
     pid_correction = 0
+    graus_motor = graus_reais * (WHEEL_DISTANCE / WHEEL_DIAMETER)
 
     while (
-        0.99 > abs(precision)
-        or abs(precision) > 1.01
+        0.99 > abs(current_angle / graus_motor)
+        or abs(current_angle / graus_motor) > 1.01
         or abs(pid_correction) > 1
     ):
-    
         current_angle = right_motor.angle()
-        graus_motor = graus_reais * (WHEEL_DISTANCE / WHEEL_DIAMETER)
-        precision = current_angle / graus_motor
+        error = graus_motor - current_angle
 
         target = graus_motor
 
-        error, pid_correction, p_gain, d_gain, i_gain = pid(target, current_angle, KP, KD, KI, error, i_gain)
+        error, p_gain, d_gain, i_gain, pid_correction = pid(
+            target, current_angle, KP, KD, KI, error, i_gain
+        )
 
         right_motor.run(pid_correction)
         left_motor.run(-pid_correction)
 
         time = watch.time()
 
-        log = [time, instance, p_gain, d_gain, i_gain, pid_correction, current_angle, target]
-        
+        log = [
+            time,
+            instance,
+            p_gain,
+            d_gain,
+            i_gain,
+            pid_correction,
+            current_angle,
+            target,
+        ]
 
         # Sending values to client and receiving feedback
         recv_message = send_message(client, log)
@@ -137,29 +139,20 @@ def turn(graus_reais, client, instance, watch):
             "KI:",
             i_gain,
             "PID",
-            pid_correction
+            pid_correction,
         )
 
-def main():
 
+def main():
     # Starting server
     client, addr = server_start()
-
     watch = StopWatch()
-    side = 1
-    instance = 1
-    i_gain = 0
 
-    while instance <= 8:
-
-        turn(90 * side, client, instance, watch)
-        
-        side *= -1
-
-        instance += 1
+    while True:
+        turn(90, client, watch)
+        break
 
     server_end(client)
 
-main()
 
-    
+main()
