@@ -1,6 +1,6 @@
 # **Projeto PID com EV3 - Controle e Visualização de Curvas**
 
-Este projeto implementa um controlador PID (Proporcional, Integral e Derivativo) em um robô EV3, usando o **MicroPython** com bibliotecas do **Pybricks**, e uma visualização em tempo real dos dados do PID usando **matplotlib**. A comunicação entre o robô e o computador é feita através de **sockets**, que permite enviar dados do servidor (EV3) para o cliente (computador) e visualizar os gráficos de correção PID e ângulo em tempo real.
+Este projeto implementa um controlador **PID** (Proporcional, Integral e Derivativo) em um robô EV3, usando o **MicroPython** com bibliotecas do **Pybricks**, e uma visualização em tempo real dos dados do PID usando **matplotlib**. A comunicação entre o robô e o computador é feita através de **sockets**, que permite enviar dados do servidor (EV3) para o cliente (computador) e visualizar os gráficos de correção PID e ângulo em tempo real.
 ## **Visão Geral**
 O projeto é composto por dois principais scripts:
 
@@ -35,23 +35,22 @@ A função pid faz o mesmo da `pid_teste.py` e retorna as variáveis de `error`,
 
 Depois na função `turn`(de girar uma quantidade x de graus), é chamada  a função PID para que dentro da condição de loop, as variáveis de ganho sejam sempre atualizadas de acordo com o erro remanescente. Dentro dessa função também é enviada o log para o servidor por meio de uma lista, e depois printa no terminal.
 
-Na função main é inicializado o server e é feita a chamada de função do turn, e após isso ser realizado, o servidor termina.
+Na função `main` é inicializado o server e é feita a chamada de função do turn, e após isso ser realizado, o servidor termina.
 
 
-## **Código do Client**
+## **Código do Cliente (plot_client.py)**
 ### **Conexão Socket**
 O cliente se conecta ao servidor EV3 usando o IP e a porta definidos. O EV3 envia dados continuamente, e o cliente recebe esses dados e responde confirmando o recebimento.
 O IP do robô está definido como `192.168.137.16`, e a porta é `12345`.
 
 O protocolo padrão da bilbioteca do Python é a TCP. Mas poderia passar de parâmetro outros tipos, tipo a UDP.
 
-### **Código do Cliente (plot_client.py)**
-Utilizando o Matplotlib, o código cria um gráfico que mostra os dados de PID (controle do motor) e o ângulo do motor. O gráfico é atualizado em tempo real usando a função FuncAnimation.
+Utilizando o Matplotlib, o código cria um gráfico que mostra os dados de PID (controle do motor) e o ângulo do motor. O gráfico é atualizado em tempo real usando a função `FuncAnimation`.
 O gráfico mostra o tempo no eixo X e os valores de PID e ângulo no eixo Y (são duas curvas, portanto, em função do **tempo**).
 
 ## **Função animate**
 
-O parâmetro i em funções como animate no Matplotlib (especialmente quando você usa FuncAnimation) é obrigatório porque a função FuncAnimation passa automaticamente um valor para ele. Esse valor é o número do "frame" atual da animação, ou seja, o valor de i representa o índice do quadro a ser atualizado. Isso é visível na chamada da função que ocorre dentro de um parâmetro do matplotlib, já no final do código:
+O parâmetro `i` em funções como animate no Matplotlib (especialmente quando você usa `FuncAnimation`) é obrigatório porque a função FuncAnimation passa automaticamente um valor para ele. Esse valor é o número do "frame" atual da animação, ou seja, o valor de i representa o índice do quadro a ser atualizado. Isso é visível na chamada da função que ocorre dentro de um parâmetro do matplotlib, já no final do código:
 
 ![alt text](assets/mat.png)
 
@@ -75,6 +74,7 @@ Os limites superior e inferior do gráfico são ajustados dinamicamente com base
 
 ### **Encerramento da Conexão**
 Quando o servidor envia a mensagem de fim, o cliente responde e encerra a conexão.
+
 ![alt text](assets/image-4.png)
 ### **Fluxo de Dados**
 
