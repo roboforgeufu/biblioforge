@@ -1,6 +1,9 @@
 # **Projeto PID com EV3 - Controle e Visualização de Curvas**
 
 Este projeto implementa um controlador **PID** (Proporcional, Integral e Derivativo) em um robô EV3, usando o **MicroPython** com bibliotecas do **Pybricks**, e uma visualização em tempo real dos dados do PID usando **matplotlib**. A comunicação entre o robô e o computador é feita através de **sockets**, que permite enviar dados do servidor (EV3) para o cliente (computador) e visualizar os gráficos de correção PID e ângulo em tempo real.
+
+A inspiração para esse código está nos comentários da [issue](https://github.com/ev3dev/vscode-ev3dev-browser/issues/68)
+
 ## **Visão Geral**
 O projeto é composto por dois principais scripts:
 
