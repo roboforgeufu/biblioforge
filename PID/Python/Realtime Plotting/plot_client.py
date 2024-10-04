@@ -27,8 +27,8 @@ bot_limit = -V_LIMIT
 
 new_offset = 0
 
-def animate(i):
 
+def animate(i):
     global top_limit
     global bot_limit
     global new_offset
@@ -81,7 +81,7 @@ def animate(i):
 
         # Limite da esquerda aumenta se passar de 3 segundos antes do tempo máximo (exceto na última curva (8))
         if time > right_limit_offset - 3000:
-            if instance != 8:
+            if instance != 8: #não entendi direito o porquê dessa instância
                 new_offset = time + 3000
                 right_limit = new_offset
 

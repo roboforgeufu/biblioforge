@@ -1,17 +1,9 @@
 #!/usr/bin/env pybricks-micropython
 
 from pybricks.ev3devices import (  # type: ignore
-    ColorSensor,
-    GyroSensor,
-    InfraredSensor,
     Motor,
-    TouchSensor,
-    UltrasonicSensor,
 )
-from pybricks.hubs import EV3Brick as ev3  # type: ignore
-from pybricks.media.ev3dev import ImageFile, SoundFile  # type: ignore
-from pybricks.parameters import Button, Color, Direction, Port, Stop  # type: ignore
-from pybricks.robotics import DriveBase  # type: ignore
+from pybricks.parameters import Port  # type: ignore
 from pybricks.tools import DataLog, StopWatch, wait  # type: ignore
 
 right_motor = Motor(Port.C)
@@ -25,13 +17,11 @@ KI = 0.3
 
 
 def reset_angle():
-
     right_motor.reset_angle(0)
     left_motor.reset_angle(0)
 
 
 def turn(instance, graus_reais):
-
     error = 0
     current_angle = 0
     i_gain = 0
@@ -60,7 +50,6 @@ def turn(instance, graus_reais):
         or abs(current_angle / graus_motor) > 1.01
         or abs(pid_correction) > 1
     ):
-
         current_angle = right_motor.angle()
         last_error = error
         error = graus_motor - current_angle
@@ -101,7 +90,6 @@ def main():
     i = 1
     side = 1
     while i <= 8:
-
         turn(i, side * 180)
         i += 1
         side *= -1
