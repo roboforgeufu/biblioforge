@@ -6,7 +6,6 @@ ou seja, não existe vértice que volta do estabelecimento pela linha amarela. D
 Todos os pesos estão unitários, apenas na inicialização que as distâncias são tratadas como infinitas (característica do algoritmo).
 """
 
-#TODO mudar saída para o formato combinado (peso, direção)
 #TODO fazer tratativa para obstáculos
 #TODO fazer com que o obstáculo seja desmarcado quando eu não consigo achar mais o caminho
 #TODO colocar pesos como distâncias 
@@ -31,20 +30,16 @@ class Grafo:
         for linha in self.matriz_adj:
             print(linha)
 
-    def dijkstra_menor_caminho(self, inicio, fim):
+    def dijkstra(self, inicio, fim):
         distancias = {i: float('inf') for i in range(self.num_vertices)}
         distancias[inicio] = 0
-        # Heap para o menor caminho
+      
         heap = [(0, inicio)]  # (distancia, vertice)
-        print(f"As distâncias inicializadas são: {distancias}")
-        print("")
-        # Anterior e direção usada
+        
         anterior = {i: None for i in range(self.num_vertices)}
         direcao = {i: None for i in range(self.num_vertices)}
-        print(f"Os valores de anterior inicializados são: {anterior}")
-        print("")
-        print(f"Os valores de direçao inicializados são: {direcao}")
-        
+        pesos = {i: None for i in range(self.num_vertices)}  
+
         while heap:
             dist_atual, vertice_atual = heapq.heappop(heap)
 
@@ -57,52 +52,31 @@ class Grafo:
             # Verifica todos os vizinhos
             for vizinho_info in self.matriz_adj[vertice_atual]:
                 vizinho, dir_cardinal, peso = vizinho_info  # Extrai vértice, direção e peso
-                vizinho = int(vizinho[1:])  # Remove o "V" e converte para inteiro
-                
+                vizinho = int(vizinho[1:])  
+
                 nova_distancia = dist_atual + peso  # Soma o peso da aresta
 
                 if nova_distancia < distancias[vizinho]:
                     distancias[vizinho] = nova_distancia
                     anterior[vizinho] = vertice_atual
                     direcao[vizinho] = dir_cardinal  # Salva a direção
+                    pesos[vizinho] = peso  # Salva o peso da aresta
                     heapq.heappush(heap, (nova_distancia, vizinho))
 
         # Reconstrói o caminho
         caminho = []
-        direcoes = []
+        direcoes_pesos = []  
         if distancias[fim] != float('inf'):
             atual = fim
             while atual is not None:
                 caminho.append(atual)
                 if anterior[atual] is not None:
-                    direcoes.append(direcao[atual])
+                    direcoes_pesos.append((direcao[atual], pesos[atual])) 
                 atual = anterior[atual]
             caminho.reverse()
-            direcoes.reverse()
+            direcoes_pesos.reverse()
 
-        return caminho, distancias[fim], direcoes
-
-    def coordenadas_consecutivas(self, direcoes):
-        if not direcoes:
-            return "Nenhum caminho encontrado"
-
-        mapa = []
-        direcao_atual = direcoes[0]
-        contador = 1
-
-        for i in range(1, len(direcoes)):
-            if direcoes[i] == direcao_atual:
-                contador += 1
-            else:
-                mapa.append(f"{contador}{direcao_atual}")
-                direcao_atual = direcoes[i]
-                contador = 1
-
-        # Adiciona a última direção
-        mapa.append(f"{contador}{direcao_atual}")
-
-        return ",".join(mapa)
-
+        return caminho, distancias[fim], direcoes_pesos
 
 # Matriz de lista de adjacências 
 matriz_lista_adjacencia = [
@@ -149,14 +123,15 @@ def main():
 
     grafo = Grafo(matriz_lista_adjacencia)
 
-    caminho, distancia, direcoes = grafo.dijkstra_menor_caminho(inicio, fim)
+    caminho, distancia, direcoes_pesos = grafo.dijkstra(inicio, fim)
 
     if distancia != float('inf'):
-        print(caminho)
-        print(distancia)
+        print(f"Os vértices visitados são: {caminho}")
+        print(f"A distância mínima calculada vale: {distancia}")
+        print(f"A saída que o Zé pediu: {direcoes_pesos}")
+
     else:
         print(f"Não há caminho entre {inicio} e {fim}")
 
-    print(grafo.coordenadas_consecutivas(direcoes))
 
 main()
