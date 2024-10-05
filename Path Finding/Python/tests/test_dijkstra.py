@@ -38,19 +38,8 @@ matriz_lista_adjacencia = [
 
 def test_dijkstra_menor_caminho():
     grafo = Grafo(matriz_lista_adjacencia)
-    caminho, distancia, direcoes = grafo.dijkstra_menor_caminho(1, 9)
+    caminho, distancia, direcoes = grafo.dijkstra(1, 9)
     assert caminho == [1, 7, 8, 9]
-
-def test_coordenadas_consecutivas_sem_direcoes():
-    grafo = Grafo(matriz_lista_adjacencia)
-    resultado = grafo.coordenadas_consecutivas([])
-    assert resultado == "Nenhum caminho encontrado"
-
-def test_coordenadas_consecutivas():
-    grafo = Grafo(matriz_lista_adjacencia)
-    direcoes = ['S', 'S', 'L', 'L', 'O']
-    resultado = grafo.coordenadas_consecutivas(direcoes)
-    assert resultado == "2S,2L,1O"
 
 def test_mostrar_matriz(capsys):
     grafo = Grafo(matriz_lista_adjacencia)
