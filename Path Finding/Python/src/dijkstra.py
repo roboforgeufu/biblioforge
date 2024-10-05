@@ -6,15 +6,27 @@ ou seja, não existe vértice que volta do estabelecimento pela linha amarela. D
 Todos os pesos estão unitários, apenas na inicialização que as distâncias são tratadas como infinitas (característica do algoritmo).
 """
 
+#TODO mudar saída para o formato combinado (peso, direção)
+#TODO fazer tratativa para obstáculos
+#TODO fazer com que o obstáculo seja desmarcado quando eu não consigo achar mais o caminho
+#TODO colocar pesos como distâncias 
+
 class Grafo:
     def __init__(self, matriz_lista_adjacencia):
         self.num_vertices = len(matriz_lista_adjacencia)
         self.matriz_adj = matriz_lista_adjacencia
     
+    def adicionar_arestas(self, origem, destino, direcao, peso=1):
+        self.matriz_adj[origem].append((f"V{destino}", f"{direcao}", peso)) 
     
-    def adicionar_arestas(self, index, direcao, peso=1):
-        self.matriz_adj[index].append((f"V{index}", f"{direcao}", peso)) 
-    
+    def remover_arestas(self, origem, destino):
+        vertice = "V" + str(destino)
+        for indice, items in enumerate(self.matriz_adj[origem]):
+            primeiro_item= items[0]
+            print(primeiro_item)
+            if primeiro_item == vertice:
+                self.matriz_adj[origem].pop(indice)
+
     def mostrar_matriz(self):
         for linha in self.matriz_adj:
             print(linha)
@@ -22,19 +34,22 @@ class Grafo:
     def dijkstra_menor_caminho(self, inicio, fim):
         distancias = {i: float('inf') for i in range(self.num_vertices)}
         distancias[inicio] = 0
-
         # Heap para o menor caminho
         heap = [(0, inicio)]  # (distancia, vertice)
-        
+        print(f"As distâncias inicializadas são: {distancias}")
+        print("")
         # Anterior e direção usada
         anterior = {i: None for i in range(self.num_vertices)}
         direcao = {i: None for i in range(self.num_vertices)}
-
+        print(f"Os valores de anterior inicializados são: {anterior}")
+        print("")
+        print(f"Os valores de direçao inicializados são: {direcao}")
+        
         while heap:
             dist_atual, vertice_atual = heapq.heappop(heap)
 
             if vertice_atual == fim:
-                break
+                break   
 
             if dist_atual > distancias[vertice_atual]:
                 continue
@@ -129,8 +144,8 @@ matriz_lista_adjacencia = [
 def main():
 
     # Exemplo de início e fim, mas poderia ser qualquer outro input
-    inicio = 1
-    fim = 3
+    inicio = 20
+    fim = 6
 
     grafo = Grafo(matriz_lista_adjacencia)
 
