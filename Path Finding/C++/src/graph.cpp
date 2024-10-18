@@ -21,7 +21,7 @@ Node Graph::getSmallestNode()
 
     for (int i = 0; i < nodes.size(); i++)
     {
-        if (nodes[i].explored)
+        if (nodes[i].explored || nodes[i].blocked)
             continue;
         if (nodes[i].distanceToOrigin <= minimun)
         {
@@ -98,4 +98,12 @@ void Graph::setDistanceToMax()
     {
         nodes[i].distanceToOrigin = INT_MAX;
     }
+}
+
+void Graph::blockNode(int index) {
+    nodes[nodeIndex[index]].blocked = true;
+}
+
+void Graph::unblockNode(int index) {
+    nodes[nodeIndex[index]].blocked = false;
 }

@@ -28,6 +28,10 @@ public:
 
     std::vector<Path> dijkstra(int originIndex, int destIndex);
 
+    void blockNode(int index);
+
+    void unblockNode(int index);
+
 private:
     std::unordered_map<int, int> nodeIndex;
     std::vector<Node> nodes;

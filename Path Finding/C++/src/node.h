@@ -10,7 +10,7 @@ class Node
 {
 public:
     int distanceToOrigin = INT_MAX;
-    bool explored = false;
+    bool explored = false, blocked = false;
     Node *prev = nullptr;
     std::vector<Edge> neighbors;
 
