@@ -83,13 +83,6 @@ Uma coisa legal, é que por padrão, heapq cria um heap mínimo, onde o menor el
 É uma estrutura de testes para Python que facilita a criação e execução de testes automatizados. Uma de suas funções é que ele descobre automaticamente arquivos e funções de teste que seguem convenções de nomenclatura, como nomes que começam ou terminam com "test". Existem aspectos mais avançados que eu recomendo que assistam a [Live de Python](https://www.youtube.com/watch?v=MjQCvJmc31A), por exemplo, como parametrizar os testes, o que são fixtures, etc.
 
 
-
-### Observações:
-
-- Ainda não foi testado o grafo com diferentes pesos na aresta, qual será o critério para implementar essas distâncias, será em cm?
-- A movimentação do robô que ficará responsável por fazer com que ele entre e saia dos estabelecimentos (tratativa)?
-
-
 ### Referências
 
 - [Explicação teórica sobre grafos](https://medium.com/@paulomartins_10299/grafos-representa%C3%A7%C3%A3o-e-implementa%C3%A7%C3%A3o-f260dd98823d)
