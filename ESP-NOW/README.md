@@ -289,3 +289,5 @@ void loop() {
 * **Tutoriais e Exemplos (Comunidade):**
     * [Fernando K Tecnologia - ESP32 com protocolo ESP-NOW](https://youtu.be/JkMOrQ2Occw?si=aix4wBQe7yr5gIcN)
     * [Programming Eletronics Academy - ESPNOW mix with #ESP32 and #ESP8266 ](https://youtu.be/_eHe7ViXyY8?si=fwM4MXuQNISR7DRA)
+    * [How to use PS4 Controller with ESP32 ](https://www.youtube.com/watch?v=dRysvxQfVDw)
+    * [TUTORIAL: Convierte tu mando de PS4 en control para MINISUMO RC con ESP32](https://youtu.be/Nn53sg2A-YM?si=0x4_UAPHOCL_3M2i)
