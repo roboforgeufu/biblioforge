@@ -63,6 +63,9 @@ void loop(){}
 ## Criptografia 👾
  Ambas as placas devem usar a mesma Chave Mestra Primária (PMK) e a mesma Chave Mestra Local (LMK) para que a comunicação criptografada funcione. Mantenha essas chaves em segredo.
 
+## Exemplos
+> No ArduinoIDE quando selecionamos a board da ESP32, já aparece exemplos usando o protocolo ESP-NOW, no entanto para a ESP8266 existem algumas adaptações. Por isso, foi gerado os exemplos abaixo. Observe que as bibliotecas chamadas são diferentes (comparando as duas ESP).
+
 ### Código para o ESP8266 Transmissor (Sender)
 ```
 #include <ESP8266WiFi.h>
