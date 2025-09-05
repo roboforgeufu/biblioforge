@@ -1,147 +1,192 @@
 import heapq
 
-"""
-Esse código usa a classe de grafo para criar métodos de manipulação de um grafo. Vale ressaltar que ele é um grafo direcionado, 
-ou seja, não existe vértice que volta do estabelecimento pela linha amarela. Deixei assim para que seja possível fazer as tratativas depois.
-Todos os pesos estão unitários, apenas na inicialização que as distâncias são tratadas como infinitas (característica do algoritmo).
-"""
+TAM_ROBO_DIVIDIDO_POR_DOIS = 7.7
 
 class Grafo:
     def __init__(self, matriz_lista_adjacencia):
         self.num_vertices = len(matriz_lista_adjacencia)
-        self.matriz_adj = matriz_lista_adjacencia
-    
-    
-    def adicionar_arestas(self, index, direcao, peso=1):
-        self.matriz_adj[index].append((f"V{index}", f"{direcao}", peso)) 
-    
-    def mostrar_matriz(self):
-        for linha in self.matriz_adj:
+        self.obstaculos = []
+
+    def adicionar_arestas(self, origem, destino, direcao, peso=1):
+        matriz_lista_adjacencia[origem].append([f"V{destino}", f"{direcao}", peso])
+
+    def remover_arestas(self, origem, destino):
+        vertice = "V" + str(destino)
+        for indice, items in enumerate(matriz_lista_adjacencia[origem]):
+            if items[0] == vertice:
+                matriz_lista_adjacencia[origem].pop(indice)
+
+    def mostrar_matriz(self, matriz):
+        for linha in matriz:
             print(linha)
 
-    def dijkstra_menor_caminho(self, inicio, fim):
+    def marcar_obstaculo(self, vertice):
+        for linha in matriz_obstaculos:
+            for aresta in linha:
+                if str(aresta[0]).strip() == vertice:
+                    aresta[-1] = float('inf')
+        self.obstaculos.append(vertice)
+    
+    def desmarcar_obstaculo(self, vertice): 
+        for linha in matriz_obstaculos:
+            for index_aresta, aresta in enumerate(linha):
+                if str(aresta[0]).strip() == vertice:
+                    index = linha[0][0]
+                    matriz_obstaculos[index][index_aresta] = [aresta[0], aresta[1], matriz_lista_adjacencia[index][index_aresta][2]]
+        self.mostrar_matriz(matriz_obstaculos)
+
+    def dijkstra(self, inicio, fim):
         distancias = {i: float('inf') for i in range(self.num_vertices)}
         distancias[inicio] = 0
-
-        # Heap para o menor caminho
-        heap = [(0, inicio)]  # (distancia, vertice)
-        
-        # Anterior e direção usada
+        heap = [(0, inicio)]  
         anterior = {i: None for i in range(self.num_vertices)}
         direcao = {i: None for i in range(self.num_vertices)}
+        pesos = {i: None for i in range(self.num_vertices)}  
 
         while heap:
             dist_atual, vertice_atual = heapq.heappop(heap)
 
             if vertice_atual == fim:
-                break
+                break   
 
             if dist_atual > distancias[vertice_atual]:
                 continue
 
-            # Verifica todos os vizinhos
-            for vizinho_info in self.matriz_adj[vertice_atual]:
-                vizinho, dir_cardinal, peso = vizinho_info  # Extrai vértice, direção e peso
-                vizinho = int(vizinho[1:])  # Remove o "V" e converte para inteiro
-                
-                nova_distancia = dist_atual + peso  # Soma o peso da aresta
+            for vizinho_info in matriz_obstaculos[vertice_atual]:
+                if len(vizinho_info) == 3: 
+                    vizinho, dir_cardinal, peso = vizinho_info  
+                    vizinho_num = int(vizinho[1:])  
 
-                if nova_distancia < distancias[vizinho]:
-                    distancias[vizinho] = nova_distancia
-                    anterior[vizinho] = vertice_atual
-                    direcao[vizinho] = dir_cardinal  # Salva a direção
-                    heapq.heappush(heap, (nova_distancia, vizinho))
+                    if peso == float('inf'): 
+                        continue
 
-        # Reconstrói o caminho
+
+                    nova_distancia = dist_atual + peso
+
+                    if nova_distancia < distancias[vizinho_num]:
+                        distancias[vizinho_num] = nova_distancia
+                        anterior[vizinho_num] = vertice_atual
+                        direcao[vizinho_num] = dir_cardinal 
+                        pesos[vizinho_num] = peso
+                        heapq.heappush(heap, (nova_distancia, vizinho_num))
+
         caminho = []
-        direcoes = []
+        direcoes_pesos = []
         if distancias[fim] != float('inf'):
             atual = fim
             while atual is not None:
                 caminho.append(atual)
                 if anterior[atual] is not None:
-                    direcoes.append(direcao[atual])
+                    direcoes_pesos.append((direcao[atual], pesos[atual]))
                 atual = anterior[atual]
             caminho.reverse()
-            direcoes.reverse()
+            direcoes_pesos.reverse()
 
-        return caminho, distancias[fim], direcoes
+        return caminho, distancias[fim], direcoes_pesos
 
-    def coordenadas_consecutivas(self, direcoes):
-        if not direcoes:
-            return "Nenhum caminho encontrado"
-
-        mapa = []
-        direcao_atual = direcoes[0]
-        contador = 1
-
-        for i in range(1, len(direcoes)):
-            if direcoes[i] == direcao_atual:
-                contador += 1
-            else:
-                mapa.append(f"{contador}{direcao_atual}")
-                direcao_atual = direcoes[i]
-                contador = 1
-
-        # Adiciona a última direção
-        mapa.append(f"{contador}{direcao_atual}")
-
-        return ",".join(mapa)
+    def recalcular_caminho_sem_obstaculos(self, inicio, fim):
+        for vertice in self.obstaculos:
+            self.desmarcar_obstaculo(vertice) 
+            caminho, distancia, _ = self.dijkstra(inicio, fim)
+            if distancia != float('inf'):
+                return caminho, distancia
+        return None, float('inf')
 
 
-# Matriz de lista de adjacências 
 matriz_lista_adjacencia = [
-    [],
-    [("V0", "O", 1), ("V2", "L", 1), ("V7", "S", 1)],
-    [],
-    [("V4", "L", 1), ("V9", "S", 1)],
-    [],
-    [("V6", "L", 1), ("V11", "S", 1)],
-    [("V5", "O", 1)],
-    [("V1", "N", 1), ("V8", "L", 1), ("V14", "S", 1)],
-    [("V7", "O", 1), ("V2", "N", 1), ("V9", "L", 1)],
-    [("V8", "O", 1), ("V3", "N", 1), ("V10", "L", 1), ("V16", "S", 1)],
-    [("V9", "O", 1), ("V4", "N", 1), ("V17", "S", 1), ("V11", "L", 1)],
-    [("V10", "O", 1), ("V12", "L", 1), ("V5", "N", 1), ("V18", "S", 1)],
-    [("V11", "O", 1)],
-    [],
-    [("V13", "O", 1), ("V15", "L", 1), ("V20", "S", 1), ("V7", "N", 1)],
-    [],
-    [("V15", "O", 1), ("V9", "N", 1), ("V22", "S", 1)],
-    [],
-    [("V11", "N", 1), ("V19", "L", 1), ("V24", "S", 1)],
-    [("V18", "O", 1)],
-    [("V14", "N", 1), ("V21", "L", 1), ("V27", "S", 1)],
-    [("V28", "S", 1), ("V22", "L", 1),("V20","O",1)],
-    [("V21", "O", 1), ("V23", "L", 1), ("V29", "S", 1),("V16","N",1)],
-    [("V22", "O", 1), ("V17", "N", 1), ("V30", "S", 1), ("V24", "L", 1)],
-    [("V23", "O", 1), ("V25", "L", 1), ("V31", "S", 1),("V18","N",1)],
-    [("V24", "O", 1)],
-    [],
-    [("V26", "O", 1), ("V20", "N", 1)],
-    [],
-    [("V28", "O", 1), ("V22", "N", 1)],
-    [],
-    [("V30", "O", 1), ("V32", "L", 1), ("V24", "N", 1)],
-    [("V31", "O", 1)]
+    [[0]],
+    [[1],["V0", "O", 24], ["V2", "L", 30], ["V7", "S", 30]],
+    [[2]],
+    [[3],["V4", "L", 30], ["V9", "S", 30]],
+    [[4]],
+    [[5],["V6", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V11", "S", 30]],
+    [[6],["V5", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[7],["V1", "N", 30], ["V8", "L", 30], ["V14", "S", 30]],
+    [[8],["V7", "O", 30], ["V2", "N", 30], ["V9", "L", 30]],
+    [[9],["V8", "O", 30], ["V3", "N", 30], ["V10", "L", 30], ["V16", "S", 30]],
+    [[10],["V9", "O", 30], ["V4", "N", 30], ["V17", "S", 30], ["V11", "L", 30]],
+    [[11],["V10", "O", 1], ["V12", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V5", "N", 30], ["V18", "S", 30]],
+    [[12],["V11", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[13]],
+    [[14],["V13", "O", 24], ["V15", "L", 30], ["V20", "S", 30], ["V7", "N", 30]],
+    [[15]],
+    [[16],["V15", "O", 30], ["V9", "N", 30], ["V22", "S", 30]],
+    [[17]],
+    [[18],["V11", "N", 30], ["V19", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V24", "S", 30]],
+    [[19],["V18", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[20],["V14", "N", 30], ["V21", "L", 30], ["V27", "S", 30]],
+    [[21],["V28", "S", 30], ["V22", "L", 30], ["V20", "O", 30]],
+    [[22],["V21", "O", 30], ["V23", "L", 30], ["V29", "S", 30], ["V16", "N", 30]],
+    [[23],["V22", "O", 30], ["V17", "N", 30], ["V30", "S", 30], ["V24", "L", 30]],
+    [[24],["V23", "O", 30], ["V25", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V31", "S", 30], ["V18", "N", 30]],
+    [[25],["V24", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[26]],
+    [[27],["V26", "O", 24], ["V20", "N", 30]],
+    [[28]],
+    [[29],["V28", "O", 30], ["V22", "N", 30]],
+    [[30]],
+    [[31],["V30", "O", 30], ["V32", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V24", "N", 30]],
+    [[32],["V31", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+]
+
+matriz_obstaculos = [
+    [[0]],
+    [[1],["V0", "O", 24], ["V2", "L", 30], ["V7", "S", 30]],
+    [[2]],
+    [[3],["V4", "L", 30], ["V9", "S", 30]],
+    [[4]],
+    [[5],["V6", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V11", "S", 30]],
+    [[6],["V5", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[7],["V1", "N", 30], ["V8", "L", 30], ["V14", "S", 30]],
+    [[8],["V7", "O", 30], ["V2", "N", 30], ["V9", "L", 30]],
+    [[9],["V8", "O", 30], ["V3", "N", 30], ["V10", "L", 30], ["V16", "S", 30]],
+    [[10],["V9", "O", 30], ["V4", "N", 30], ["V17", "S", 30], ["V11", "L", 30]],
+    [[11],["V10", "O", 1], ["V12", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V5", "N", 30], ["V18", "S", 30]],
+    [[12],["V11", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[13]],
+    [[14],["V13", "O", 24], ["V15", "L", 30], ["V20", "S", 30], ["V7", "N", 30]],
+    [[15]],
+    [[16],["V15", "O", 30], ["V9", "N", 30], ["V22", "S", 30]],
+    [[17]],
+    [[18],["V11", "N", 30], ["V19", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V24", "S", 30]],
+    [[19],["V18", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[20],["V14", "N", 30], ["V21", "L", 30], ["V27", "S", 30]],
+    [[21],["V28", "S", 30], ["V22", "L", 30], ["V20", "O", 30]],
+    [[22],["V21", "O", 30], ["V23", "L", 30], ["V29", "S", 30], ["V16", "N", 30]],
+    [[23],["V22", "O", 30], ["V17", "N", 30], ["V30", "S", 30], ["V24", "L", 30]],
+    [[24],["V23", "O", 30], ["V25", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V31", "S", 30], ["V18", "N", 30]],
+    [[25],["V24", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
+    [[26]],
+    [[27],["V26", "O", 24], ["V20", "N", 30]],
+    [[28]],
+    [[29],["V28", "O", 30], ["V22", "N", 30]],
+    [[30]],
+    [[31],["V30", "O", 30], ["V32", "L", 18-TAM_ROBO_DIVIDIDO_POR_DOIS], ["V24", "N", 30]],
+    [[32],["V31", "O", 18-TAM_ROBO_DIVIDIDO_POR_DOIS]],
 ]
 
 def main():
-
-    # Exemplo de início e fim, mas poderia ser qualquer outro input
-    inicio = 1
-    fim = 3
+    inicio = 20
+    fim = 6
 
     grafo = Grafo(matriz_lista_adjacencia)
 
-    caminho, distancia, direcoes = grafo.dijkstra_menor_caminho(inicio, fim)
-
+    grafo.marcar_obstaculo("V5")
+    grafo.mostrar_matriz(matriz_obstaculos)
+    
+    caminho, distancia, direcoes_pesos = grafo.dijkstra(inicio, fim)
+    
     if distancia != float('inf'):
-        print(caminho)
-        print(distancia)
+        print(f"Os vértices visitados são: {caminho}")
+        print(f"A distância mínima calculada vale: {distancia}")
+        print(f"A saída que o Zé pediu: {direcoes_pesos}")
     else:
-        print(f"Não há caminho entre {inicio} e {fim}")
-
-    print(grafo.coordenadas_consecutivas(direcoes))
+        print("Caminho bloqueado, tentando remover obstáculos.")
+        caminho, distancia = grafo.recalcular_caminho_sem_obstaculos(inicio, fim)
+        if distancia != float('inf'):
+            print(f"Caminho após remover obstáculos: {caminho}")
+            print(f"A distância mínima recalculada vale: {distancia}")
+        else:
+            print("Não foi possível encontrar um caminho, mesmo sem os obstáculos.")
 
 main()
