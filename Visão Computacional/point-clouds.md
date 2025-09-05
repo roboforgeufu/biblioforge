@@ -104,10 +104,10 @@ Arquiteturas especializadas, porque as CNNs não funcionam diretamente em dados 
 
 # Bibliotecas
 
-- PCL
-- Pytorch Geometric
-- Open3D
-- ROS (suporte a nuvem de pontos)
+- [PCL](https://pointclouds.org)
+- [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest)
+- [Open3D](https://www.open3d.org)
+- [ROS](https://www.ros.org) (suporte a nuvem de pontos)
 
 # Datasets
 
